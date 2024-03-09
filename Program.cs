@@ -70,10 +70,17 @@ app.MapGet("/api/users/{id}", (BangazonDbContext db, int id) =>
 //***newUser: return all the information for the newly created user.
 app.MapPost("/api/users/new", (BangazonDbContext db, UserDto userObj) =>
 {
-    User newUser = new(){ Username = userObj.Username, Email = userObj.Email, PhoneNumber = userObj.PhoneNumber, Uid = userObj.Uid, Seller = false };
-    db.Users.Add(newUser);
-    db.SaveChanges();
-    return Results.Created($"/api/users/new/{newUser.Id}", newUser);
+    try
+    {
+        User newUser = new(){ Username = userObj.Username, Email = userObj.Email, PhoneNumber = userObj.PhoneNumber, Uid = userObj.Uid, Seller = userObj.Seller };
+        db.Users.Add(newUser);
+        db.SaveChanges();
+        return Results.Created($"/api/users/new/{newUser.Id}", newUser);
+    }
+    catch
+    {
+        return Results.BadRequest();
+    }
 });
 
 //***editUser: return the single user object containing the updated information
